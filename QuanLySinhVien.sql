@@ -173,3 +173,98 @@ select MaSV,HoSV,TenSV,DMKhoa.TenKhoa,Phai from DMSV join DMKhoa ON DMSV.MaKhoa=
 
 /*Liệt kê những sinh viên nữ, tên có chứa chữ N*/
 select MaSV,HoSV,TenSV,Phai from DMSV WHERE Phai = 'nữ' AND TenSV LIKE '%N%';
+
+/*Danh sách sinh viên có nơi sinh ở Hà Nội và sinh vào tháng 02, gồm các 
+thông tin: Họ sinh viên, Tên sinh viên, Nơi sinh, Ngày sinh.*/
+select MaSV,HoSV,TenSV,NoiSinh,NgaySinh from DMSV WHERE NgaySinh LIKE '%%%%%-02-%%';
+
+/*Cho biết những sinh viên có tuổi lớn hơn 20, thông tin gồm: Họ tên sinh 
+viên, Tuổi,Học bổng.*/
+select MaSV,HoSV,TenSV,(year(current_date())-year(NgaySinh))as Tuoi,HocBong from DMSV WHERE (year(current_date())-year(NgaySinh))>20;
+
+/*Danh sách những sinh viên có tuổi từ 20 đến 25, thông tin gồm: Họ tên sinh 
+viên, Tuổi, Tên khoa.*/
+select MaSV,HoSV,TenSV,(year(current_date())-year(NgaySinh))as Tuoi,DMKhoa.TenKhoa from DMSV JOIN DMKhoa ON DMSV.MaKhoa=DMKhoa.MaKhoa 
+WHERE (year(current_date())-year(NgaySinh))>=20 and (year(current_date())-year(NgaySinh))<=25;
+
+/*Danh sách sinh viên sinh vào mùa xuân năm 1990, gồm các thông tin: Họ
+tên sinh viên,Phái, Ngày sinh.*/
+select MaSV,HoSV,TenSV,NoiSinh,NgaySinh from DMSV where Month(NgaySinh) IN(1,2,3) and Year(NgaySinh) =1990;
+
+/*Cho biết thông tin về mức học bổng của các sinh viên, gồm: Mã sinh viên, 
+Phái, Mã khoa, Mức học bổng. Trong đó, mức học bổng sẽ hiển thị là “Học 
+bổng cao” nếu giá trị của field học bổng lớn hơn 500,000 và ngược lại hiển 
+thị là “Mức trung bình”*/
+select MaSV,HoSV,TenSV,Phai,MaKhoa,
+CASE 
+WHEN HocBong>500000 THEN 'Học bổng cao' 
+ELSE 'Mức trung bình' END AS MucHocBong
+from DMSV ;
+
+/*Cho biết tổng số sinh viên của toàn trường*/
+select count(*) as TongSinhVienToanTruong from DMSV;
+
+/*.Cho biết tổng sinh viên và tổng sinh viên nữ.*/
+select count(*) as TongSinhVienToanTruong,
+count(CASE WHEN Phai='Nữ' THEN 1 END) as TongSinhVienNu from DMSV;
+
+/*Cho biết tổng số sinh viên của từng khoa.*/
+select DMKhoa.TenKhoa, count(*) as TongSinhVien from  DMSV JOIN DMKhoa ON DMSV.MaKHoa=DMKhoa.MaKhoa GROUP BY DMKhoa.TenKhoa;
+
+/*Cho biết số lượng sinh viên học từng môn.*/
+select  DMMH.TenMH, count(*) as TongSinhVien from  KetQua JOIN DMMH ON DMMH.MaMH= KetQua.MaMH WHERE LanThi=1
+GROUP BY DMMH.TenMH;
+
+/*Cho biết số lượng môn học mà sinh viên đã học(tức tổng số môn học có 
+trong bảng kq)*/
+select  DMSV.TenSV, count(*) as TongMonHoc from  KetQua JOIN DMSV ON DMSV.MaSV= KetQua.MaSV WHERE LanThi=1
+GROUP BY DMSV.MaSV;
+
+/*Cho biết tổng số học bổng của mỗi khoa.*/
+select DMKhoa.TenKhoa, sum(DMSV.HocBong) as TongHocBong from DMSV JOIN DMKhoa ON DMSV.MaKhoa=DMKhoa.MaKhoa GROUP BY DMSV.MaKhoa;
+
+/*27.Cho biết học bổng cao nhất của mỗi khoa.*/
+select DMKhoa.TenKhoa, max(DMSV.HocBong) as TongHocBong from DMSV JOIN DMKhoa ON DMSV.MaKhoa=DMKhoa.MaKhoa GROUP BY DMSV.MaKhoa;
+
+/*Cho biết tổng số sinh viên nam và tổng số sinh viên nữ của mỗi khoa.*/
+select DMKhoa.TenKhoa,
+count(CASE WHEN Phai='nữ' THEN 1 END) as TongSinhVienNu ,count(CASE WHEN Phai='nam' THEN 1 END) as TongSinhVienNam from DMSV JOIN DMKhoa ON DMKhoa.MaKhoa=DMSV.MaKhoa GROUP BY DMKhoa.TenKhoa;
+
+/*29.Cho biết số lượng sinh viên theo từng độ tuổi.*/
+select (Year(current_date)-Year(NgaySinh))as Tuoi,
+count(*) as TongSinhVien from DMSV GROUP BY Tuoi;
+
+/*30.Cho biết những năm sinh nào có 2 sinh viên đang theo học tại trường.*/
+select Year(NgaySinh) as Nam, count(*)as TongSinhVien from DMSV GROUP BY Nam HAVING TongSinhVien=2;
+
+-- Cho biết những nơi nào có hơn 2 sinh viên đang theo học tại trường.
+select NoiSinh, count(*)as TongSinhVien from DMSV GROUP BY NoiSinh HAVING  TongSinhVien=2;
+
+-- 32.Cho biết những môn nào có trên 3 sinh viên dự thi.
+select DMMH.TenMH , count(*)as TongSinhVien from DMMH RIGHT JOIN KetQua ON DMMH.MaMH=KetQua.MaMH where LanThi=1 GROUP BY TenMH HAVING TongSinhVien>=3;
+
+-- 33.Cho biết những sinh viên thi lại trên 2 lần.
+select DMSV.MaSV,DMSV.HoSV,DMSV.TenSV,COUNT(*)SoLanThi from DMSV JOIN KetQua ON KetQua.MaSV=DMSV.MaSV GROUP BY MaSV HAVING SoLanThi>=2;
+
+-- 34.Cho biết những sinh viên nam có điểm trung bình lần 1 trên 7.0
+select DMSV.MaSV,DMSV.HoSV,DMSV.TenSV from DMSV 
+JOIN KetQua ON KetQua.MaSV=DMSV.MaSV WHERE DMSV.Phai='nam' and Diem>=7 and KetQua.LanThi=1 GROUP BY MaSV; 
+
+-- 35.Cho biết danh sách các sinh viên rớt trên 2 môn ở lần thi 1.
+select DMSV.MaSV,DMSV.HoSV,DMSV.TenSV,COUNT(*) as SoMon from DMSV 
+JOIN KetQua ON KetQua.MaSV=DMSV.MaSV WHERE KetQua.LanThi=1 and Diem<5 GROUP BY MaSV HAVING SoMon>=2; 
+
+-- 36.Cho biết danh sách những khoa có nhiều hơn 2 sinh viên nam
+select DMKhoa.MaKhoa,DMKhoa.TenKhoa , COUNT(CASE WHEN Phai='nam' THEN 1 END) SoSVNam from DMSV
+JOIN DMKhoa ON DMKhoa.MaKhoa=DMSV.MaKhoa GROUP BY MaKhoa HAVING SoSVNam>=2;
+
+-- 37.Cho biết những khoa có 2 sinh đạt học bổng từ 200.000 đến 300.000.
+select DMKhoa.MaKhoa,DMKhoa.TenKhoa, COUNT(*) as TongSV from DMSV 
+JOIN DMKhoa ON DMKhoa.MaKhoa=DMSV.MaKhoa WHERE DMSV.HocBong between 200000 and 300000  GROUP BY MaKhoa HAVING TongSV>=2;
+
+/*38.Cho biết số lượng sinh viên đậu và số lượng sinh viên rớt của từng môn 
+trong lần thi 1.*/
+
+
+-- 39.Cho biết sinh viên nào có học bổng cao nhất.
+-- 40.Cho biết sinh viên nào có điểm thi lần 1 môn cơ sở dữ liệu cao nhất.
