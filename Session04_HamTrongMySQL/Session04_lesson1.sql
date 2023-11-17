@@ -63,7 +63,12 @@ select sj.sub_id,sj.sub_name, m.mark from Subjects sj
 JOIN Marks m ON sj.sub_id=m.sub_id WHERE mark>=ALL(select MAX(mark)FROM Marks GROUP BY m.student_id) GROUP BY sj.sub_id,sj.sub_name, m.mark ;
 
 -- Danh so thu tu cua diem theo chieu giam
-select distinct Marks.* from Marks ORDER BY mark DESC;
+select distinct DENSE_RANK()OVER(ORDER BY mark DESC) as Ranks, Marks.* from Marks ;
+SELECT
+    8-ROW_NUMBER() OVER (ORDER BY mark DESC) AS ranks,
+    Marks.*
+FROM
+    Marks;
 
 -- Thay doi kieu du lieu cua cot SubjectName trong bang Subjects thanh nvarchar(max)
 alter table Subjects modify sub_name nvarchar(255);

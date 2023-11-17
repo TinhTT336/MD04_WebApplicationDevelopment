@@ -169,8 +169,19 @@ JOIN customer c ON o.c_id=c.c_id;
 select od.o_id,p.p_name,od.o_quantity,p.p_price ,(od.o_quantity*p.p_price) as total from order_detail od 
 JOIN product p ON p.p_id=od.p_id ;
 
-select od.o_id,o.o_date,sum(od.o_quantity*p.p_price) as total,count(*) as tong_sp from order_detail od 
+select od.o_id,o.o_date,c.c_name,sum(od.o_quantity*p.p_price) as total,count(*) as tong_sp from order_detail od 
  JOIN orders o ON od.o_id=o.o_id
+ JOIN customer c ON o.c_id=c.c_id
 JOIN product p ON p.p_id=od.p_id GROUP BY od.o_id;
 
+-- LIMIT AND OFFSET (OFFSET: vi tri bat dau hien thi)
+select * from product LIMIT 3;
+-- hoac
+select * from product LIMIT 3 OFFSET 0;
+-- hoac
+select * from product LIMIT 0,3;
+  
+select * from product LIMIT 3,3;
+-- hoac 
+select * from product LIMIT 3 OFFSET 3;
 
