@@ -89,6 +89,7 @@ alter table student modify status varchar(10);
 
 /*Cập nhật(Update) trường Status sao cho những học viên nhỏ hơn 30 tuổi sẽ nhận giá trị ‘Young’, trường hợp còn lại nhận giá trị ‘Old’ sau đó hiển thị toàn bộ nội dung bảng Student lên như sau:*/
 update student set status=(CASE WHEN age<30 THEN 'Young' ELSE 'Old' END);
+update student set status=if(age<30, 'Young' , 'Old' );
 -- delete from student where student_id IN(5,6,7,8); 
 select * from student;
 
