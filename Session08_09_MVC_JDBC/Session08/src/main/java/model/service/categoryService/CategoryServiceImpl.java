@@ -28,4 +28,9 @@ public class CategoryServiceImpl implements ICategoryService {
     public void delete(Integer id) {
         categoryDAO.delete(id);
     }
+
+    @Override
+    public List<Category> findByName(String name) {
+        return categoryDAO.findByName(name);
+    }
 }

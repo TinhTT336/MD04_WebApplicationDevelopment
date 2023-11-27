@@ -8,7 +8,8 @@
 <h1><%= "Category Management" %>
 </h1>
 <br/>
-<a href="category">Danh muc</a>
-<a href="product">San pham</a>
+<a href="category">Danh muc</a><br>
+<a href="product">San pham</a><br>
+<a href="user">Nguoi dung</a><br>
 </body>
 </html>

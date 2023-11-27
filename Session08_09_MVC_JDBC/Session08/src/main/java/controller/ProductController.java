@@ -32,6 +32,9 @@ public class ProductController extends HttpServlet {
                 request.getRequestDispatcher("views/product/edit-product.jsp").forward(request, response);
                 break;
             case "delete":
+                int idDelete = Integer.parseInt(request.getParameter("id"));
+                productService.delete(idDelete);
+                showProducts(request,response);
                 break;
             default:
                 showProducts(request, response);
@@ -62,7 +65,6 @@ public class ProductController extends HttpServlet {
     }
 
     private void editProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Product productEdit=productService.findById(Integer.valueOf(request.getParameter("id")));
         int id = Integer.parseInt(request.getParameter("productId"));
         String proName = request.getParameter("productName");
         String description = request.getParameter("description");

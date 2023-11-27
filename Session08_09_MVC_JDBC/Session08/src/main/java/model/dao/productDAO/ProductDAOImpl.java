@@ -42,6 +42,7 @@ public class ProductDAOImpl implements IProductDAO {
     @Override
     public boolean saveOrUpdate(Product product) {
         Connection connection = null;
+        int check;
         try {
             connection = ConnectionDB.openConnection();
             if (findById(product.getProductId()) == null) {
@@ -51,10 +52,7 @@ public class ProductDAOImpl implements IProductDAO {
                 preparedStatement.setString(2, product.getDescription());
                 preparedStatement.setBoolean(3, product.isProductStatus());
                 preparedStatement.setInt(4, product.getStock());
-                int check = preparedStatement.executeUpdate();
-                if (check > 0) {
-                    return true;
-                }
+             check = preparedStatement.executeUpdate();
             } else {
                 String sql = "UPDATE product SET product_name=?,description=?,product_status=?,stock=? WHERE product_id=?";
                 PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -63,10 +61,10 @@ public class ProductDAOImpl implements IProductDAO {
                 preparedStatement.setBoolean(3, product.isProductStatus());
                 preparedStatement.setInt(4, product.getStock());
                 preparedStatement.setInt(5, product.getProductId());
-                int check = preparedStatement.executeUpdate();
-                if (check > 0) {
-                    return true;
-                }
+                check = preparedStatement.executeUpdate();
+            }
+            if (check > 0) {
+                return true;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -78,12 +76,33 @@ public class ProductDAOImpl implements IProductDAO {
 
     @Override
     public Product findById(Integer integer) {
-        for (Product product : findAll()) {
-            if (product.getProductId() == integer) {
-                return product;
+//        for (Product product : findAll()) {
+//            if (product.getProductId() == integer) {
+//                return product;
+//            }
+//        }
+
+        Connection connection = null;
+        Product product = new Product();
+        try {
+            connection = ConnectionDB.openConnection();
+            PreparedStatement pstm = connection.prepareStatement(" SELECT * FROM product where product_id=?");
+            pstm.setInt(1, integer);
+            ResultSet resultSet = pstm.executeQuery();
+            while (resultSet.next()) {
+                product.setProductId(resultSet.getInt("product_id"));
+                product.setProductName(resultSet.getString("product_name"));
+                product.setDescription(resultSet.getString("description"));
+                product.setProductStatus(resultSet.getBoolean("product_status"));
+                product.setStock(resultSet.getInt("stock"));
             }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            ConnectionDB.closeConnection(connection);
         }
-        return null;
+        return product;
     }
 
     @Override

@@ -14,6 +14,10 @@
 <body>
 <h1>Danh sach danh muc</h1>
 <a href="category?action=create">Them moi danh muc</a>
+<form action="category" method="get">
+  <input type="text" name="searchName"value="${searchName}">
+  <input type="submit" name="action" value="search">
+</form>
 <br>
 <br>
 <table border="1" cellspacing="0">

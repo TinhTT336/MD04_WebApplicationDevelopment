@@ -7,7 +7,7 @@ import model.entity.Product;
 import java.util.List;
 
 public class ProductServiceImpl implements IProductService {
-    IProductDAO productDAO = new ProductDAOImpl();
+    private IProductDAO productDAO = new ProductDAOImpl();
 
     @Override
     public List<Product> findAll() {

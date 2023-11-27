@@ -41,6 +41,7 @@
 <body>
 <h1>Thêm mới san pham</h1>
 <form action="<%=request.getContextPath()%>/product" method="post">
+    <input type="hidden" name="action" value="edit">
     <label for="productId">ID:</label>
     <input type="text" id="productId" name="productId" value="${editProduct.productId}" readonly><br>
 
@@ -50,8 +51,8 @@
     <input type="text" id="description" name="description" value="${editProduct.description}" required><br>
 
     <label>Trạng thái:</label>
-    <input type="radio" value="true" ${editProduct.productStatus?checked:""} name="productStatus" > <span>Active</span>
-    <input type="radio" value="false" ${!editProduct.productStatus?checked:""} name="productStatus"><span>Inactive</span>
+    <input type="radio" value="1" ${editProduct.productStatus?checked:""} name="productStatus" > <span>Active</span>
+    <input type="radio" value="0" ${!editProduct.productStatus?checked:""} name="productStatus"><span>Inactive</span>
     <br>
     <br>
     <label for="stock">Ton kho san pham:</label>

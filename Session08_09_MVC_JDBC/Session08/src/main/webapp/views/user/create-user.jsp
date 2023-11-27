@@ -8,7 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>CREATE CATEGORY</title>
+    <title>CREATE PRODUCT</title>
     <style>
         form {
             width: 300px;
@@ -39,19 +39,19 @@
     </style>
 </head>
 <body>
-<h1>Chỉnh sửa danh mục</h1>
-<form action="<%=request.getContextPath()%>/category" method="post">
-    <input type="hidden" name="action" value="edit">
-      <label for="categoryId">ID:</label>
-      <input type="text" id="categoryId" name="categoryId" readonly value="${editCategory.categoryId}"><br>
+<h1>Thêm mới san pham</h1>
+<form action="<%=request.getContextPath()%>/user" method="post">
+    <%--  <label for="userId">ID:</label>--%>
+    <%--  <input type="text" id="userId" name="userId" readOnly><br>--%>
 
-    <label for="categoryName">Tên danh mục:</label>
-    <input type="text" id="categoryName" name="categoryName" required value="${editCategory.categoryName}"><br>
+    <label for="userName">Tên nguoi dung:</label>
+    <input type="text" id="userName" name="userName" required><br>
 
-    <label>Trạng thái:</label>
-    <input type="radio"  name="categoryStatus" value="true"${editCategory.categoryStatus?"checked":""}> <span>Active</span>
-    <input type="radio"  name="categoryStatus" value="false"${!editCategory.categoryStatus?"checked":""}><span>Inactive</span>
-    <br>
+    <label for="phone">So dien thoai:</label>
+    <input type="text" id="phone" name="phone" required><br>
+
+    <label for="address">Dia chi:</label>
+    <input type="text" id="address" name="address" required><br>
     <br>
 
     <input type="submit" value="Thêm">

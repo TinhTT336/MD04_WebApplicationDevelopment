@@ -2,7 +2,6 @@ package model.dao.categoryDAO;
 
 import model.entity.Category;
 import util.ConnectionDB;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -42,6 +41,7 @@ public class CategoryDAOImpl implements ICategoryDAO {
     @Override
     public boolean saveOrUpdate(Category category) {
         Connection connection = null;
+        int check;
         try {
             connection = ConnectionDB.openConnection();
             if (findById(category.getCategoryId()) == null) {
@@ -49,21 +49,17 @@ public class CategoryDAOImpl implements ICategoryDAO {
                 PreparedStatement pstm = connection.prepareStatement(sql);
                 pstm.setString(1, category.getCategoryName());
                 pstm.setBoolean(2, category.isCategoryStatus());
-                int check = pstm.executeUpdate();
-                if (check > 0) {
-                    return true;
-                }
+               check = pstm.executeUpdate();
             } else {
                 String sql = "UPDATE category SET name=?,status=? WHERE id=?";
-
                 PreparedStatement preparedStatement = connection.prepareStatement(sql);
                 preparedStatement.setString(1, category.getCategoryName());
                 preparedStatement.setBoolean(2, category.isCategoryStatus());
                 preparedStatement.setInt(3, category.getCategoryId());
-                int check = preparedStatement.executeUpdate();
-                if (check > 0) {
-                    return true;
-                }
+               check = preparedStatement.executeUpdate();
+            }
+            if (check > 0) {
+                return true;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -123,4 +119,28 @@ public class CategoryDAOImpl implements ICategoryDAO {
         }
     }
 
+    @Override
+    public List<Category> findByName(String catName) {
+        List<Category> categories = new ArrayList<>();
+        Connection connection = null;
+        try {
+            connection = ConnectionDB.openConnection();
+            String sql = "SELECT * FROM category WHERE LCASE(name) LIKE CONCAT('%', LCASE(?), '%')";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1,catName);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                Category category = new Category();
+                category.setCategoryId(resultSet.getInt("id"));
+                category.setCategoryName(resultSet.getString("name"));
+                category.setCategoryStatus(resultSet.getBoolean("status"));
+                categories.add(category);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            ConnectionDB.closeConnection(connection);
+        }
+        return categories;
+    }
 }

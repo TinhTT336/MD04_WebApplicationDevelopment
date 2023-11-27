@@ -39,8 +39,28 @@ public class CategoryController extends HttpServlet {
                 }
                 showCategories(request, response);
                 break;
+            case "search":
+                searchCategory(request, response);
+                break;
             default:
                 showCategories(request, response);
+        }
+
+    }
+
+    private void searchCategory(HttpServletRequest request, HttpServletResponse response) {
+        String searchName = request.getParameter("searchName");
+        try {
+            List<Category> searchCategories = categoryService.findByName(searchName);
+
+            System.out.println(searchCategories);
+
+            request.setAttribute("searchName", searchName);
+            request.setAttribute("categoryList", searchCategories);
+            request.getRequestDispatcher("views/category.jsp").forward(request, response);
+            showCategories(request, response);
+        } catch (ServletException | IOException e) {
+            throw new RuntimeException(e);
         }
 
     }
@@ -50,6 +70,7 @@ public class CategoryController extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
 
         String action = request.getParameter("action");
+
         System.out.println(action);
         if (action == null) {
             //lay du lieu
@@ -61,14 +82,11 @@ public class CategoryController extends HttpServlet {
                 showCategories(request, response);
                 response.sendRedirect("views/create-category.jsp?err");
             }
-        } else if (action.equals("edit")) {
-            //lay du lieu
-            int editId= Integer.parseInt(request.getParameter("id"));
-            Category editCategory = categoryService.findById(editId);
+        } else {
+            Category editCategory = new Category();
             editCategory.setCategoryId(Integer.parseInt(request.getParameter("categoryId")));
             editCategory.setCategoryName(request.getParameter("categoryName"));
             editCategory.setCategoryStatus(Boolean.parseBoolean(request.getParameter("categoryStatus")));
-
             if (categoryService.saveOrUpdate(editCategory)) {
                 showCategories(request, response);
             } else {
