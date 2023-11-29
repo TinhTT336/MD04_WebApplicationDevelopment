@@ -2,13 +2,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>STUDENT MANAGEMENT</title>
+    <title>JSP - Hello World</title>
 </head>
 <body>
-<h1><%= "STUDENT MANAGEMENT" %>
+<h1><%= "Hello World!" %>
 </h1>
 <br/>
-<a href="student">Student</a><br>
-<a href="class">Class</a>
+<a href="category">CATEGORY</a><br>
+<a href="product">PRODUCT</a><br>
 </body>
 </html>

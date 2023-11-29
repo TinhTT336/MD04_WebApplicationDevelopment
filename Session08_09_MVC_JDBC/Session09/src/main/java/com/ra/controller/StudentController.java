@@ -49,7 +49,6 @@ public class StudentController extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
 
         String action = request.getParameter("action");
-        System.out.println(action);
         Student student = new Student();
         student.setStudentName(request.getParameter("studentName"));
         student.setEmail(request.getParameter("email"));
