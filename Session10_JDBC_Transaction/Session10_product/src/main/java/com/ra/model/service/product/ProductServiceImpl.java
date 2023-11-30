@@ -28,4 +28,9 @@ public class ProductServiceImpl implements ProductService {
     public Product findById(Integer id) {
         return productDAO.findById(id);
     }
+
+    @Override
+    public List<Product> pagination(int limit, int currentPage) {
+        return productDAO.pagination(limit,currentPage);
+    }
 }

@@ -11,11 +11,12 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 public class ProductDAOImpl implements ProductDAO {
-    private CategoryDAO categoryDAO = new CategoryDAOImpl();
+    public  static int totalPage=0;
+
+    private final CategoryDAO categoryDAO = new CategoryDAOImpl();
 
     @Override
     public List<Product> findAll() {
@@ -144,4 +145,33 @@ public class ProductDAOImpl implements ProductDAO {
     }
 
 
+    @Override
+    public List<Product> pagination(int limit, int currentPage) {
+        Connection connection=null;
+        List<Product>products=new ArrayList<>();
+        try {
+        connection=ConnectionDB.openConnection();
+            CallableStatement callableStatement= connection.prepareCall("{CALL PROC_PAGINATION_PRODUCT(?,?,?)}");
+            callableStatement.setInt(1,limit);
+            callableStatement.setInt(2,currentPage);
+            callableStatement.registerOutParameter(3,java.sql.Types.INTEGER);
+            ResultSet resultSet= callableStatement.executeQuery();
+            totalPage=callableStatement.getInt(3);
+            while (resultSet.next()) {
+                Product product = new Product();
+                product.setProductId(resultSet.getInt("id"));
+                product.setProductName(resultSet.getString("name"));
+                product.setPrice(resultSet.getFloat("price"));
+                product.setCategory(new CategoryDAOImpl().findById(resultSet.getInt("category_id")));
+
+                products.add(product);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }finally {
+            ConnectionDB.closeConnection(connection);
+        }
+        return products;
+    }
 }

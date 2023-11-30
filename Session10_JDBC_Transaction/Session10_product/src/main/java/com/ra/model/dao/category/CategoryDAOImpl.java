@@ -8,7 +8,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CategoryDAOImpl implements CategoryDAO {
     @Override
@@ -90,9 +92,9 @@ public class CategoryDAOImpl implements CategoryDAO {
         try {
             connection = ConnectionDB.openConnection();
             CallableStatement callableStatement = connection.prepareCall("{CALL PROC_FIND_CATEGORY_BY_ID(?)}");
-            callableStatement.setInt(1,id);
-            ResultSet rs= callableStatement.executeQuery();
-            while (rs.next()){
+            callableStatement.setInt(1, id);
+            ResultSet rs = callableStatement.executeQuery();
+            while (rs.next()) {
                 category.setCategoryId(rs.getInt("id"));
                 category.setCategoryName(rs.getString("name"));
                 category.setCategoryStatus(rs.getBoolean("status"));
@@ -100,7 +102,7 @@ public class CategoryDAOImpl implements CategoryDAO {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        }finally {
+        } finally {
             ConnectionDB.closeConnection(connection);
         }
         return category;
@@ -113,9 +115,9 @@ public class CategoryDAOImpl implements CategoryDAO {
         try {
             connection = ConnectionDB.openConnection();
             CallableStatement callableStatement = connection.prepareCall("SELECT*FROM category WHERE name=?");
-            callableStatement.setString(1,name);
-            ResultSet rs= callableStatement.executeQuery();
-            while (rs.next()){
+            callableStatement.setString(1, name);
+            ResultSet rs = callableStatement.executeQuery();
+            while (rs.next()) {
                 category.setCategoryId(rs.getInt("id"));
                 category.setCategoryName(rs.getString("name"));
                 category.setCategoryStatus(rs.getBoolean("status"));
@@ -123,9 +125,56 @@ public class CategoryDAOImpl implements CategoryDAO {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        }finally {
+        } finally {
             ConnectionDB.closeConnection(connection);
         }
         return category;
+    }
+
+    @Override
+    public Integer getTotalPage(int limitPage, int currentPage) {
+        Connection connection = null;
+        Integer totalPage = null;
+        try {
+            connection = ConnectionDB.openConnection();
+            CallableStatement callableStatement = connection.prepareCall("{CALL PROC_PAGINATION_CATEGORY(?,?,?)}");
+            callableStatement.setInt(1, limitPage);
+            callableStatement.setInt(2, currentPage);
+            callableStatement.registerOutParameter(3, java.sql.Types.INTEGER);
+            callableStatement.executeQuery();
+            totalPage = callableStatement.getInt(3);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            ConnectionDB.closeConnection(connection);
+        }
+        return totalPage;
+    }
+
+    @Override
+    public List<Category> pagination(int limitPage, int currentPage) {
+        Connection connection = null;
+        List<Category> categories = new ArrayList<>();
+        try {
+            connection = ConnectionDB.openConnection();
+            CallableStatement callableStatement = connection.prepareCall("{CALL PROC_PAGINATION_CATEGORY(?,?,?)}");
+            callableStatement.setInt(1, limitPage);
+            callableStatement.setInt(2, currentPage);
+            callableStatement.registerOutParameter(3, java.sql.Types.INTEGER);
+            ResultSet resultSet = callableStatement.executeQuery();
+            while (resultSet.next()) {
+                Category category = new Category();
+                category.setCategoryId(resultSet.getInt("id"));
+                category.setCategoryName(resultSet.getString("name"));
+                category.setCategoryStatus(resultSet.getBoolean("status"));
+                category.setQuantityProduct(resultSet.getInt("quantity_product"));
+                categories.add(category);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            ConnectionDB.closeConnection(connection);
+        }
+        return categories;
     }
 }

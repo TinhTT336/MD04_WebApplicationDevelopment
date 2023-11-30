@@ -35,8 +35,15 @@ public class CategoryController extends HttpServlet {
                 categoryService.delete(idDelete);
                 showCategoryList(request, response);
                 break;
+
             default:
-                showCategoryList(request, response);
+                int currentPage= ((request.getParameter("page"))!=null)?Integer.parseInt(request.getParameter("page")):1;
+                int totalPage = categoryService.getTotalPage(2, currentPage);
+                List<Category> categories = categoryService.pagination(2, currentPage);
+                request.setAttribute("currentPage", currentPage);
+                request.setAttribute("totalPage", totalPage);
+                request.setAttribute("categoryList", categories);
+                request.getRequestDispatcher("views/category/category.jsp").forward(request,response);
         }
     }
 

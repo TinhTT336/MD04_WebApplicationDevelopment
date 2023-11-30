@@ -67,6 +67,30 @@
         td a:hover {
             background-color: #207cca;
         }
+
+        .pagination {
+            text-align: right;
+        }
+
+        .pagination li {
+            display: inline-block;
+            margin-left: 5px;
+        }
+
+        .pagination li a {
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .pagination li a.active {
+            background-color: #333;
+            color: #fff;
+        }
+
+
+
     </style>
 </head>
 <body>
@@ -93,5 +117,15 @@
         </tr>
     </c:forEach>
 </table>
+<ul class="pagination">
+    <c:forEach var="i" begin="1" end="${totalPage}">
+        <li>
+            <a href="/category?page=${i}" class="${i == currentPage ? 'active' : ''}">
+                    ${i}
+            </a>
+        </li>
+    </c:forEach>
+</ul>
+
 </body>
 </html>

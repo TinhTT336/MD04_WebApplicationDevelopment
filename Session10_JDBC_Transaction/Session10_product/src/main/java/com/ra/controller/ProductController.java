@@ -1,5 +1,6 @@
 package com.ra.controller;
 
+import com.ra.model.dao.product.ProductDAOImpl;
 import com.ra.model.entity.Category;
 import com.ra.model.entity.Product;
 import com.ra.model.service.category.CategoryService;
@@ -26,26 +27,35 @@ public class ProductController extends HttpServlet {
         }
         switch (action) {
             case "add":
-                List<Category>categoryList=categoryService.findAll();
-                request.setAttribute("categoryList",categoryList);
-                request.getRequestDispatcher("views/product/add-product.jsp").forward(request,response);
+                List<Category> categoryList = categoryService.findAll();
+                request.setAttribute("categoryList", categoryList);
+                request.getRequestDispatcher("views/product/add-product.jsp").forward(request, response);
                 break;
             case "edit":
-                int idEdit= Integer.parseInt(request.getParameter("id"));
-                Product product=productService.findById(idEdit);
-                request.setAttribute("product",product);
-                List<Category>categories=categoryService.findAll();
-                request.setAttribute("categoryList",categories);
-                request.getRequestDispatcher("views/product/edit-product.jsp").forward(request,response);
+                int idEdit = Integer.parseInt(request.getParameter("id"));
+                Product product = productService.findById(idEdit);
+                request.setAttribute("product", product);
+                List<Category> categories = categoryService.findAll();
+                request.setAttribute("categoryList", categories);
+                request.getRequestDispatcher("views/product/edit-product.jsp").forward(request, response);
 
                 break;
             case "delete":
-                int idDelete= Integer.parseInt(request.getParameter("id"));
+                int idDelete = Integer.parseInt(request.getParameter("id"));
                 productService.delete(idDelete);
-                showProductList(request,response);
+                showProductList(request, response);
                 break;
             default:
-                showProductList(request, response);
+                int totalPage=ProductDAOImpl.totalPage;
+                int currentPage = (request.getParameter("page")!=null?Integer.parseInt(request.getParameter("page")):1);
+                List<Product> productList = productService.pagination(2, currentPage);
+                System.out.println(totalPage);
+                System.out.println(currentPage);
+                System.out.println(productList);
+                request.setAttribute("totalPage",totalPage);
+                request.setAttribute("currentPage",currentPage);
+                request.setAttribute("productList", productList);
+                request.getRequestDispatcher("views/product/product.jsp").forward(request, response);
         }
     }
 

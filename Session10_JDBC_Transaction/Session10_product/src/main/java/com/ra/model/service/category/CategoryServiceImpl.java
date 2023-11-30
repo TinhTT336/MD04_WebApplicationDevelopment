@@ -33,4 +33,16 @@ public class CategoryServiceImpl implements CategoryService {
     public Category findByName(String name) {
         return categoryDAO.findByName(name);
     }
+
+    @Override
+    public Integer getTotalPage(int limitPage, int currentPage) {
+        return categoryDAO.getTotalPage(limitPage,currentPage);
+    }
+
+    @Override
+    public List<Category> pagination(int limitPage, int currentPage) {
+        return categoryDAO.pagination(limitPage, currentPage);
+    }
+
+
 }
