@@ -44,8 +44,8 @@
              <strong>${message}</strong>
          </div>
      </c:if>
-        <form action="${pageContext.request.contextPath}/product" method="get">
-            <input type="search" name="searchName" >
+        <form action="${pageContext.request.contextPath}/product" method="post">
+            <input type="search" name="searchName" value="${searchName}">
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
       <br />

@@ -34,7 +34,7 @@ contentType="text/html;charset=UTF-8" language="java" %>
           >
             <div class="form-group mb-4">
               <label>PRODUCT ID</label>
-              <form:input type="text" class="form-control" path="productId" />
+              <form:input type="text" class="form-control" path="productId" readonly="true"/>
             </div>
             <div class="form-group mb-4">
               <label>PRODUCT NAME</label>

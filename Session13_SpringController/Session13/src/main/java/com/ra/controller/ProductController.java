@@ -67,11 +67,12 @@ public class ProductController {
         return ("redirect:/product");
     }
 
-    @GetMapping("/product")
+    @PostMapping("/product")
     public String search(@RequestParam(value = "searchName", required = false) String searchName, Model model) {
         if (searchName != null) {
             List<Product> productList = productService.findByName(searchName);
             model.addAttribute("productList", productList);
+            model.addAttribute("searchName",searchName);
         }else{
             List<Product> productList = productService.findAll();
             model.addAttribute("productList", productList);

@@ -70,41 +70,19 @@ public class CategoryController {
             List<Category> categoryList = categoryService.findAll();
             model.addAttribute("categoryList", categoryList);
         }
-        return "category/index";
+        return "redirect:/index";
     }
 
-//    @RequestMapping("category/{page}")
-//    public String pagination( @PathVariable("page") int page,Model model) {
-//        if (page <= 0 || page > totalPage) {
-//            page = 1;
-//        }
-//
-//        List<Category> categoryList = categoryService.pagination(2, page);
-//        model.addAttribute("categoryList", categoryList);
-//        model.addAttribute("totalPage", totalPage);
-//        System.out.println(page);
-//        System.out.println(totalPage);
-//        System.out.println(categoryList);
-//        System.out.println("OK");
-//        return "category/index";
-//    }
     @RequestMapping("category/{page}")
-    public String pagination(@PathVariable("page") int page, Model model) {
-        int itemsPerPage = 2; // Số lượng mục trên mỗi trang
-        int totalItems = totalPage; // Tổng số lượng danh mục
-        int totalPage = (int) Math.ceil((double) totalItems / itemsPerPage);
-
+    public String pagination( @PathVariable("page") int page,Model model) {
         if (page <= 0 || page > totalPage) {
             page = 1;
         }
 
-        List<Category> categoryList = categoryService.pagination(itemsPerPage, page);
+        List<Category> categoryList = categoryService.pagination(2, page);
         model.addAttribute("categoryList", categoryList);
         model.addAttribute("totalPage", totalPage);
-        System.out.println(page);
-        System.out.println(totalPage);
-        System.out.println(categoryList);
-        System.out.println("OK");
         return "category/index";
     }
+
 }
